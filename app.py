@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def validate():
+    print(request.json)
     allowed = True
     try:
         for container_spec in request.json["request"]["object"]["spec"]["containers"]:
