@@ -6,24 +6,23 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['POST'])
-def webhook():
+def validate():
     allowed = True
-    request_info = request.json
-    pprint(request_info)
-     # for container_spec in request_info
-    for container_spec in request_info["request"]["object"]["spec"]["containers"]:
-         if 'env' not in container_spec:
-             print("Environment Variables Cannot Be Passed to Containers")
-             allowed = False
+    try:
+        for container_spec in request.json["request"]["object"]["spec"]["containers"]:
+            if "env" not in container_spec:
+                allowed = False
+    except KeyError:
+        pass
+    return jsonify(
+        {
+            "response": {
+                "allowed": allowed,
+                "uid": request.json["request"]["uid"],
+                "status": {"message": "env keys are prohibited"},
+            }
+        }
+    )
 
-    admission_response = {
-        "allowed": allowed
-    }
-    admissionReview = {
-        "response": admission_response
-    }
-    return jsonify(admissionReview)
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
+app.run(host='0.0.0.0', debug=True )
