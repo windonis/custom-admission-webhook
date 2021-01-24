@@ -24,5 +24,4 @@ def validate():
         }
     )
 
-
-app.run(host='0.0.0.0', debug=True )
+app.run(debug=True )
